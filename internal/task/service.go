@@ -34,3 +34,29 @@ func generateId(tasks []models.Task) int {
 	}
 	return max + 1
 }
+
+func Delete(id int, tasks []models.Task) ([]models.Task, error) {
+	for i, task := range tasks {
+		if task.ID == id {
+			if task.Deleted {
+				return tasks, fmt.Errorf("task %d is already deleted", id)
+			}
+			tasks[i].Deleted = true
+			return tasks, nil
+		}
+	}
+	return tasks, fmt.Errorf("task %d not found", id)
+}
+
+func Undo(id int, tasks []models.Task) ([]models.Task, error) {
+	for i, task := range tasks {
+		if task.ID == id {
+			if !task.Deleted {
+				return tasks, fmt.Errorf("task %id is not deleted yet", id)
+			}
+			tasks[i].Deleted = false
+			return tasks, nil
+		}
+	}
+	return tasks, fmt.Errorf("task %d not found", id)
+}

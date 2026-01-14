@@ -71,6 +71,52 @@ func main() {
 			return
 		}
 		listTasks(data.Tasks)
+	case "delete":
+		deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
+		id := deleteCmd.Int("id", 0, "task id")
+		err := deleteCmd.Parse(os.Args[2:])
+		if err != nil {
+			fmt.Println("Parse command failed!")
+			return
+		}
+		if *id == 0 {
+			fmt.Println("Usage: todo delete -id <task id>")
+			return
+		}
+		data.Tasks, err = task.Delete(*id, data.Tasks)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = store.WriteJSON(filePath, data)
+		if err != nil {
+			fmt.Println("Write file failed!")
+			return
+		}
+		listTasks(data.Tasks)
+	case "undo":
+		undoCmd := flag.NewFlagSet("undo", flag.ExitOnError)
+		id := undoCmd.Int("id", 0, "task id")
+		err := undoCmd.Parse(os.Args[2:])
+		if err != nil {
+			fmt.Println("Parse command failed!")
+			return
+		}
+		if *id == 0 {
+			fmt.Println("Usage: todo undo -id <task id>")
+			return
+		}
+		data.Tasks, err = task.Undo(*id, data.Tasks)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = store.WriteJSON(filePath, data)
+		if err != nil {
+			fmt.Println("Write file failed!")
+			return
+		}
+		listTasks(data.Tasks)
 	default:
 		fmt.Println("Unknown command")
 	}
@@ -78,6 +124,9 @@ func main() {
 
 func listTasks(tasks []models.Task) {
 	for _, taskData := range tasks {
+		if taskData.Deleted {
+			continue
+		}
 		status := ""
 		if taskData.Done {
 			status = "x"

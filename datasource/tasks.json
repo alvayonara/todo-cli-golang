@@ -3,22 +3,26 @@
   {
    "id": 1,
    "text": "Learn Go",
-   "done": true
+   "done": true,
+   "deleted": false
   },
   {
    "id": 2,
    "text": "Playing FIFA",
-   "done": true
+   "done": true,
+   "deleted": false
   },
   {
    "id": 3,
    "text": "Learn Java",
-   "done": false
+   "done": false,
+   "deleted": false
   },
   {
    "id": 4,
    "text": "Learn swim",
-   "done": false
+   "done": false,
+   "deleted": false
   }
  ]
 }
