@@ -1,4 +1,4 @@
-**Todo Apps CLI**</br>
+<h1>Todo Apps CLI</h1></br>
 **Language**: Golang
 
 **Available command**:
