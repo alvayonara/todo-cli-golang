@@ -8,6 +8,16 @@
   {
    "id": 2,
    "text": "Playing FIFA",
+   "done": true
+  },
+  {
+   "id": 3,
+   "text": "Learn Java",
+   "done": false
+  },
+  {
+   "id": 4,
+   "text": "Learn swim",
    "done": false
   }
  ]

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
-	"strconv"
 	"todo-cli-golang/internal/store"
 	"todo-cli-golang/internal/task"
 	"todo-cli-golang/models"
@@ -25,34 +25,42 @@ func main() {
 		fmt.Println("Usage: go run main.go <command>")
 		return
 	}
-	command := os.Args[1]
-	switch command {
+	switch os.Args[1] {
 	case "list":
 		fmt.Println("Listing all tasks...")
 		listTasks(data.Tasks)
 	case "add":
-		if len(os.Args) < 3 {
-			fmt.Println("Missing task name!")
+		addCmd := flag.NewFlagSet("add", flag.ExitOnError)
+		title := addCmd.String("t", "", "task title")
+		err := addCmd.Parse(os.Args[2:])
+		if err != nil {
+			fmt.Println("Parse command failed!")
 			return
 		}
-		data.Tasks = task.Add(os.Args[2], data.Tasks)
-		err := store.WriteJSON(filePath, data)
+		if *title == "" {
+			fmt.Println("Usage: todo add -t \"task title\"")
+			return
+		}
+		data.Tasks = task.Add(*title, data.Tasks)
+		err = store.WriteJSON(filePath, data)
 		if err != nil {
 			fmt.Println("Write file failed!")
 			return
 		}
 		listTasks(data.Tasks)
 	case "done":
-		if len(os.Args) < 3 {
-			fmt.Println("Missing task ID!")
-			return
-		}
-		id, err := strconv.Atoi(os.Args[2])
+		doneCmd := flag.NewFlagSet("done", flag.ExitOnError)
+		id := doneCmd.Int("id", 0, "task id")
+		err := doneCmd.Parse(os.Args[2:])
 		if err != nil {
-			fmt.Println("Invalid task ID")
+			fmt.Println("Parse command failed!")
 			return
 		}
-		data.Tasks, err = task.MarkDone(id, data.Tasks)
+		if *id == 0 {
+			fmt.Println("Usage: todo done -id <task id>")
+			return
+		}
+		data.Tasks, err = task.MarkDone(*id, data.Tasks)
 		if err != nil {
 			fmt.Println(err)
 			return
