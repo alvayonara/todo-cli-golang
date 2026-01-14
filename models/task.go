@@ -5,7 +5,8 @@ type Tasks struct {
 }
 
 type Task struct {
-	ID   int    `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
+	ID      int    `json:"id"`
+	Text    string `json:"text"`
+	Done    bool   `json:"done"`
+	Deleted bool   `json:"deleted"`
 }
