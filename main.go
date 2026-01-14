@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"todo-cli-golang/models"
 )
 
@@ -34,6 +35,27 @@ func main() {
 		}
 		data.Tasks = addTask(os.Args[2], data.Tasks)
 		err := writeJSON(filePath, data)
+		if err != nil {
+			fmt.Println("Write file failed!")
+			return
+		}
+		listTasks(data.Tasks)
+	case "done":
+		if len(os.Args) < 3 {
+			fmt.Println("Missing task ID!")
+			return
+		}
+		id, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Println("Invalid task ID")
+			return
+		}
+		data.Tasks, err = markTaskDone(id, data.Tasks)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		err = writeJSON(filePath, data)
 		if err != nil {
 			fmt.Println("Write file failed!")
 			return
@@ -90,4 +112,17 @@ func generateId(tasks []models.Task) int {
 		}
 	}
 	return max + 1
+}
+
+func markTaskDone(id int, tasks []models.Task) ([]models.Task, error) {
+	for i, task := range tasks {
+		if task.ID == id {
+			if task.Done {
+				return tasks, fmt.Errorf("task %d is already done", id)
+			}
+			tasks[i].Done = true
+			return tasks, nil
+		}
+	}
+	return tasks, fmt.Errorf("task %d not found", id)
 }
