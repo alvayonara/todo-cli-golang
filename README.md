@@ -3,12 +3,15 @@
 **Language**: Golang
 
 **Available command**:
-- list (no arg2)
-- add + [arg2 = "new task name"]
-- done + [arg2 = task id]
+- list --> no flag
+- add --> flag = -t
+- done --> flag = -id
+- delete --> flag = -id
+- undo --> flag = -id
 
 **Run CLI:**</br>
-go run main.go <command> <arg2 if required>
+go run main.go <command> <flag> <arg2 if required>
 
 **i.e:**</br>
-go run main.go add "Playing Point Blank"
+go run main.go add -t "Playing Point Blank"<br/>
+go run main.go done -id 1
