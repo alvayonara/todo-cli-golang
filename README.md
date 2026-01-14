@@ -1,8 +1,13 @@
-Available command:
-- list (no arg2)
-- add + arg2 = "task name"
+**Todo Apps CLI**</br>
+**Language**: Golang
 
-Run CLI:
-go run main.go <command> <arg2 if any>
-i.e:
+**Available command**:
+- list (no arg2)
+- add + [arg2 = "new task name"]
+- done + [arg2 = task id]
+
+**Run CLI:**</br>
+go run main.go <command> <arg2 if required>
+
+**i.e:**</br>
 go run main.go add "Playing Point Blank"
