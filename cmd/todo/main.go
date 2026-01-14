@@ -27,8 +27,15 @@ func main() {
 	}
 	switch os.Args[1] {
 	case "list":
-		fmt.Println("Listing all tasks...")
-		listTasks(data.Tasks)
+		listCmd := flag.NewFlagSet("list", flag.ExitOnError)
+		all := listCmd.Bool("all", false, "show all tasks including deleted")
+		err := listCmd.Parse(os.Args[2:])
+		if err != nil {
+			fmt.Println("Parse command failed!")
+			return
+		}
+		fmt.Println("Listing tasks...")
+		listTasks(data.Tasks, *all)
 	case "add":
 		addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 		title := addCmd.String("t", "", "task title")
@@ -47,7 +54,7 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks)
+		listTasks(data.Tasks, false)
 	case "done":
 		doneCmd := flag.NewFlagSet("done", flag.ExitOnError)
 		id := doneCmd.Int("id", 0, "task id")
@@ -70,7 +77,7 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks)
+		listTasks(data.Tasks, false)
 	case "delete":
 		deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
 		id := deleteCmd.Int("id", 0, "task id")
@@ -93,7 +100,7 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks)
+		listTasks(data.Tasks, false)
 	case "undo":
 		undoCmd := flag.NewFlagSet("undo", flag.ExitOnError)
 		id := undoCmd.Int("id", 0, "task id")
@@ -116,21 +123,25 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks)
+		listTasks(data.Tasks, false)
 	default:
 		fmt.Println("Unknown command")
 	}
 }
 
-func listTasks(tasks []models.Task) {
+func listTasks(tasks []models.Task, showAll bool) {
 	for _, taskData := range tasks {
-		if taskData.Deleted {
+		if taskData.Deleted && !showAll {
 			continue
 		}
 		status := ""
 		if taskData.Done {
 			status = "x"
 		}
-		fmt.Printf("[%s] %d: %s\n", status, taskData.ID, taskData.Text)
+		deleted := ""
+		if taskData.Deleted {
+			deleted = "(deleted)"
+		}
+		fmt.Printf("[%s] %d: %s %s\n", status, taskData.ID, taskData.Text, deleted)
 	}
 }
