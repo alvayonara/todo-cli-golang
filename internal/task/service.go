@@ -52,7 +52,7 @@ func Undo(id int, tasks []models.Task) ([]models.Task, error) {
 	for i, task := range tasks {
 		if task.ID == id {
 			if !task.Deleted {
-				return tasks, fmt.Errorf("task %id is not deleted yet", id)
+				return tasks, fmt.Errorf("task %d is not deleted yet", id)
 			}
 			tasks[i].Deleted = false
 			return tasks, nil
