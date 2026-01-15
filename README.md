@@ -1,5 +1,9 @@
 <h1>Todo Apps CLI</h1></br>
 
+<p align="center">
+  <img src="screenshot/ss-01.png" alt="Alt text">
+</p>
+  
 **Language**: Golang
 
 **Available command**:
