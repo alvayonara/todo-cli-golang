@@ -29,13 +29,42 @@ func main() {
 	case "list":
 		listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 		all := listCmd.Bool("all", false, "show all tasks including deleted")
+		done := listCmd.Bool("done", false, "show done tasks")
+		active := listCmd.Bool("active", false, "show active tasks")
+
 		err := listCmd.Parse(os.Args[2:])
 		if err != nil {
 			fmt.Println("Parse command failed!")
 			return
 		}
+
+		flagCount := 0
+		if *all {
+			flagCount++
+		}
+		if *done {
+			flagCount++
+		}
+		if *active {
+			flagCount++
+		}
+		if flagCount > 1 {
+			fmt.Println("Use only one of: -all, -done, -active")
+			return
+		}
+
+		filter := filterActive // default
+		switch {
+		case *all:
+			filter = filterAll
+		case *done:
+			filter = filterDone
+		case *active:
+			filter = filterActive
+		}
+
 		fmt.Println("Listing tasks...")
-		listTasks(data.Tasks, *all)
+		listTasks(data.Tasks, filter)
 	case "add":
 		addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 		title := addCmd.String("t", "", "task title")
@@ -54,7 +83,7 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks, false)
+		listTasks(data.Tasks, filterActive)
 	case "done":
 		doneCmd := flag.NewFlagSet("done", flag.ExitOnError)
 		id := doneCmd.Int("id", 0, "task id")
@@ -77,7 +106,7 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks, false)
+		listTasks(data.Tasks, filterActive)
 	case "delete":
 		deleteCmd := flag.NewFlagSet("delete", flag.ExitOnError)
 		id := deleteCmd.Int("id", 0, "task id")
@@ -100,7 +129,7 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks, false)
+		listTasks(data.Tasks, filterActive)
 	case "undo":
 		undoCmd := flag.NewFlagSet("undo", flag.ExitOnError)
 		id := undoCmd.Int("id", 0, "task id")
@@ -123,17 +152,29 @@ func main() {
 			fmt.Println("Write file failed!")
 			return
 		}
-		listTasks(data.Tasks, false)
+		listTasks(data.Tasks, filterActive)
 	default:
 		fmt.Println("Unknown command")
 	}
 }
 
-func listTasks(tasks []models.Task, showAll bool) {
+func listTasks(tasks []models.Task, filter listFilter) {
 	for _, taskData := range tasks {
-		if taskData.Deleted && !showAll {
+		if taskData.Deleted && filter != filterAll {
 			continue
 		}
+
+		switch filter {
+		case filterDone:
+			if !taskData.Done || taskData.Deleted {
+				continue
+			}
+		case filterActive:
+			if taskData.Done || taskData.Deleted {
+				continue
+			}
+		}
+
 		status := ""
 		if taskData.Done {
 			status = "x"
@@ -145,3 +186,11 @@ func listTasks(tasks []models.Task, showAll bool) {
 		fmt.Printf("[%s] %d: %s %s\n", status, taskData.ID, taskData.Text, deleted)
 	}
 }
+
+type listFilter int
+
+const (
+	filterActive listFilter = iota
+	filterDone
+	filterAll
+)
