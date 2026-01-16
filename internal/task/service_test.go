@@ -18,3 +18,13 @@ func TestAdd(t *testing.T) {
 		t.Errorf("new task should not be done")
 	}
 }
+
+func TestMarkDone(t *testing.T) {
+	tasks := []models.Task{
+		{1, "Playing Fifa", false, false},
+	}
+	tasks, _ = MarkDone(1, tasks)
+	if tasks[0].Done != true {
+		t.Errorf("expected task done Playing FIFA, got %t", tasks[0].Done)
+	}
+}
