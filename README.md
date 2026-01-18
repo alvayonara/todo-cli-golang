@@ -3,10 +3,9 @@
 <p align="center">
   <img src="screenshot/ss-01.png" alt="Alt text">
 </p>
-  
-**Language**: Golang
+This is command-line task manager written in Go, built to demonstrate idiomatic Go practices. </br>
 
-**Available command**:
+## Available Command
 - list
   - flag:
     - ["no arg2"] = default, only display active tasks
@@ -18,7 +17,7 @@
 - delete --> flag = -id
 - undo --> flag = -id
 
-**How to run program:**</br>
+## Usage
 go run main.go "command" "flag" "arg2 if required"
 
 **i.e:**</br>
@@ -26,3 +25,13 @@ go run main.go add **-t** "Playing Point Blank"<br/>
 go run main.go done **-id** 1</br>
 go run main.go list</br>
 go run main.go list **-all**
+
+## Project Structure
+
+```md
+
+cmd/todo/            # Application entry point
+internal/task/       # Business logic
+internal/store/      # Persistence layer
+models/              # Domain models
+.github/workflows/   # CI configuration
