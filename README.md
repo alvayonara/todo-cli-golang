@@ -3,7 +3,7 @@
 <p align="center">
   <img src="screenshot/ss-01.png" alt="Alt text">
 </p>
-This is command-line task manager written in Go, built to demonstrate idiomatic Go practices. </br>
+This is TODO Apps command-line program written in Go, built to demonstrate idiomatic Go practices. </br>
 
 ## Available Command
 - list
